@@ -1,1 +1,1024 @@
-website
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>kebabOS — A Pygame Operating System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --bg: #faf9f7;
+    --bg-card: #ffffff;
+    --bg-code: #f0efed;
+    --text-primary: #1a1a1a;
+    --text-secondary: #6b6560;
+    --text-muted: #9e9893;
+    --accent: #e8553d;
+    --accent-glow: rgba(232, 85, 61, 0.12);
+    --teal: #2bbaa0;
+    --teal-glow: rgba(43, 186, 160, 0.12);
+    --border: #eae8e4;
+    --border-subtle: #f0efed;
+    --code-bg: #1e1e2e;
+    --code-text: #cdd6f4;
+    --code-comment: #6c7086;
+    --code-keyword: #cba6f7;
+    --code-string: #a6e3a1;
+    --code-func: #89b4fa;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+    --radius: 12px;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  .dark {
+    --bg: #111110;
+    --bg-card: #1a1918;
+    --bg-code: #141413;
+    --text-primary: #ede9e3;
+    --text-secondary: #9e9893;
+    --text-muted: #6b6560;
+    --accent: #f06d55;
+    --accent-glow: rgba(240, 109, 85, 0.15);
+    --teal: #3dd4b8;
+    --teal-glow: rgba(61, 212, 184, 0.12);
+    --border: #2a2928;
+    --border-subtle: #222120;
+    --code-bg: #0d0d0c;
+    --code-text: #cdd6f4;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.7;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  nav.scrolled {
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .nav-brand .kebab-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .nav-brand span {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-github {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .nav-github:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+  }
+
+  .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 2rem 80px;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--teal);
+    background: var(--teal-glow);
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s ease-out both;
+  }
+
+  .hero-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .kebab-logo {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease-out 0.1s both;
+    position: relative;
+  }
+
+  .kebab-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease-out 0.2s both;
+  }
+
+  .hero h1 .accent { color: var(--accent); }
+
+  .hero p {
+    max-width: 560px;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s ease-out 0.3s both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    animation: fadeUp 0.6s ease-out 0.4s both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(232, 85, 61, 0.3);
+  }
+
+  .btn-secondary {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--text-muted);
+    transform: translateY(-1px);
+  }
+
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 100px 2rem;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    max-width: 520px;
+    margin-bottom: 3rem;
+    font-weight: 300;
+  }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .feature-card {
+    background: var(--bg-card);
+    padding: 2rem;
+    transition: background 0.3s;
+  }
+
+  .feature-card:hover {
+    background: var(--bg);
+  }
+
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+  }
+
+  .feature-icon.window { background: var(--accent-glow); color: var(--accent); }
+  .feature-icon.taskbar { background: var(--teal-glow); color: var(--teal); }
+  .feature-icon.browser { background: rgba(137, 180, 250, 0.12); color: #89b4fa; }
+  .feature-icon.clipboard { background: rgba(203, 166, 247, 0.12); color: #cba6f7; }
+  .feature-icon.persist { background: rgba(249, 226, 175, 0.12); color: #c9a84c; }
+
+  .feature-card h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .feature-card p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── INSTALL ── */
+  .install-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .install-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .install-card.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .install-header {
+    padding: 1.25rem 1.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .install-header .step {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    background: var(--accent-glow);
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  .install-header h3 {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .install-header p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .code-block {
+    background: var(--code-bg);
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block code {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--code-text);
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  .code-block .comment { color: var(--code-comment); }
+  .code-block .keyword { color: var(--code-keyword); }
+  .code-block .string { color: var(--code-string); }
+  .code-block .func { color: var(--code-func); }
+
+  .copy-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: var(--code-text);
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    opacity: 0;
+    transition: opacity 0.2s, background 0.2s;
+  }
+
+  .code-block:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { background: rgba(255,255,255,0.15); }
+  .copy-btn.copied { color: var(--teal); }
+
+  /* ── CONTROLS ── */
+  .controls-table {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border-spacing: 0;
+  }
+
+  .controls-table thead {
+    background: var(--bg-card);
+  }
+
+  .controls-table th {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .controls-table td {
+    padding: 0.9rem 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.9rem;
+  }
+
+  .controls-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .controls-table tbody tr {
+    transition: background 0.2s;
+  }
+
+  .controls-table tbody tr:hover {
+    background: var(--bg-card);
+  }
+
+  .controls-table .action {
+    font-weight: 500;
+  }
+
+  .controls-table .control {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  kbd {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  /* ── DEVELOPER NOTES ── */
+  .dev-notes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .dev-note {
+    background: var(--bg-card);
+    padding: 1.75rem;
+  }
+
+  .dev-note h4 {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .dev-note p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .dev-note code {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: var(--bg-code);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--text-primary);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 2rem;
+    text-align: center;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 2rem;
+  }
+
+  footer p {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  footer a:hover { color: var(--accent); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── MOBILE NAV OVERLAY ── */
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 101;
+    background: var(--bg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .mobile-nav-overlay.open {
+    display: flex;
+  }
+
+  .mobile-nav-overlay a {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .mobile-nav-overlay a:hover { color: var(--accent); }
+
+  .mobile-nav-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 60px;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-github { display: none; }
+    .mobile-menu-btn { display: block; }
+
+    .hero { padding: 100px 1.5rem 80px; }
+    section { padding: 60px 1.5rem; }
+
+    .install-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dev-notes {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .btn { justify-content: center; }
+
+    .controls-table th,
+    .controls-table td {
+      padding: 0.75rem 1rem;
+    }
+
+    .controls-table .control {
+      font-size: 0.72rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#" class="nav-brand" onclick="return false;">
+    <img class="kebab-icon" src="static/favicon.png" alt="kebabOS">
+    <span>kebabOS</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#controls">Controls</a></li>
+    <li><a href="#dev">Dev Notes</a></li>
+  </ul>
+  <a href="https://github.com" class="nav-github" target="_blank" rel="noopener">
+    <i class="fa-brands fa-github"></i> Source
+  </a>
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav-overlay" id="mobileNav">
+  <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+  <a href="#features" class="mobile-nav-link">Features</a>
+  <a href="#install" class="mobile-nav-link">Install</a>
+  <a href="#controls" class="mobile-nav-link">Controls</a>
+  <a href="#dev" class="mobile-nav-link">Dev Notes</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    v0.3.0 — stable
+  </div>
+
+  <div class="kebab-logo">
+    <img src="static/favicon.png" alt="kebabOS logo">
+  </div>
+
+  <h1>kebab<span class="accent">OS</span></h1>
+
+  <p>
+    A high-performance, window-based operating system environment built entirely in Pygame.
+    Custom kernel, window management, and graphical web rendering.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#install" class="btn btn-primary">
+      <i class="fa-solid fa-terminal"></i> Get Started
+    </a>
+    <a href="#features" class="btn btn-secondary">
+      <i class="fa-solid fa-arrow-down"></i> Explore
+    </a>
+  </div>
+
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="reveal">
+    <p class="section-label">01 / Features</p>
+    <h2 class="section-title">Everything you need,<br>nothing you don't.</h2>
+    <p class="section-desc">
+      A focused set of capabilities designed to deliver a complete desktop experience within Pygame.
+    </p>
+  </div>
+
+  <div class="features-grid reveal">
+    <div class="feature-card">
+      <div class="feature-icon window"><i class="fa-solid fa-layer-group"></i></div>
+      <h3>Window Manager</h3>
+      <p>Drag, resize, and stack multiple application windows with fluid, responsive interactions.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon taskbar"><i class="fa-solid fa-grip-lines"></i></div>
+      <h3>Smart Taskbar</h3>
+      <p>Pin and unpin apps via context menus with real-time running indicators using a teal accent bar.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon browser"><i class="fa-solid fa-globe"></i></div>
+      <h3>kebabBrowser</h3>
+      <p>Graphical web rendering via html2image with scroll support and clipboard integration.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon clipboard"><i class="fa-solid fa-clipboard"></i></div>
+      <h3>Clipboard Support</h3>
+      <p>Full Ctrl+V pasting functionality in text fields across all applications.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon persist"><i class="fa-solid fa-hard-drive"></i></div>
+      <h3>Persistence</h3>
+      <p>Saves pinned apps and settings to <code>storage/data.json</code> between sessions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section id="install">
+  <div class="reveal">
+    <p class="section-label">02 / Installation</p>
+    <h2 class="section-title">Up and running<br>in two steps.</h2>
+    <p class="section-desc">
+      Install the dependencies, ensure a Chromium-based browser is available, and you're set.
+    </p>
+  </div>
+
+  <div class="install-grid reveal">
+    <div class="install-card full-width">
+      <div class="install-header">
+        <span class="step">01</span>
+        <h3>Install Python dependencies</h3>
+      </div>
+      <div class="code-block">
+        <button class="copy-btn" data-code="pip install pygame requests html2image">Copy</button>
+        <code><span class="func">pip</span> <span class="keyword">install</span> <span class="string">pygame requests html2image</span></code>
+      </div>
+    </div>
+
+    <div class="install-card">
+      <div class="install-header">
+        <span class="step">02</span>
+        <h3>Linux clipboard</h3>
+      </div>
+      <div class="code-block">
+        <button class="copy-btn" data-code="sudo apt-get install xclip">Copy</button>
+        <code><span class="func">sudo</span> <span class="keyword">apt-get install</span> <span class="string">xclip</span></code>
+      </div>
+    </div>
+
+    <div class="install-card">
+      <div class="install-header">
+        <span class="step">03</span>
+        <h3>Browser engine</h3>
+      </div>
+      <div class="code-block">
+        <code><span class="comment"># Requires one of:</span>
+<span class="string">Google Chrome</span>
+<span class="string">Microsoft Edge</span>
+<span class="string">Chromium</span></code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTROLS -->
+<section id="controls">
+  <div class="reveal">
+    <p class="section-label">03 / Controls</p>
+    <h2 class="section-title">Keyboard &amp; mouse.</h2>
+    <p class="section-desc">
+      Intuitive controls built around familiar desktop paradigms.
+    </p>
+  </div>
+
+  <div class="reveal">
+    <table class="controls-table">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Control</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="action">Open Start Menu</td>
+          <td class="control">Click the kebab icon <kbd>bottom-left</kbd></td>
+        </tr>
+        <tr>
+          <td class="action">Pin to Taskbar</td>
+          <td class="control">Right-click app → <kbd>Pin to Taskbar</kbd></td>
+        </tr>
+        <tr>
+          <td class="action">Unpin App</td>
+          <td class="control">Right-click icon → <kbd>Unpin</kbd></td>
+        </tr>
+        <tr>
+          <td class="action">Resize Window</td>
+          <td class="control">Drag the <kbd>bottom-right</kbd> corner handle</td>
+        </tr>
+        <tr>
+          <td class="action">Paste URL</td>
+          <td class="control"><kbd>Ctrl</kbd> + <kbd>V</kbd> in Browser</td>
+        </tr>
+        <tr>
+          <td class="action">Clear URL Bar</td>
+          <td class="control">Click <kbd>×</kbd> in address bar</td>
+        </tr>
+        <tr>
+          <td class="action">Scroll Webpage</td>
+          <td class="control"><kbd>Mouse Wheel</kbd> inside Browser</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- DEV NOTES -->
+<section id="dev">
+  <div class="reveal">
+    <p class="section-label">04 / Developer</p>
+    <h2 class="section-title">Under the hood.</h2>
+    <p class="section-desc">
+      Architecture notes for contributors and app developers.
+    </p>
+  </div>
+
+  <div class="dev-notes reveal">
+    <div class="dev-note">
+      <h4>Event Routing</h4>
+      <p>The kernel automatically sends <code>KEYDOWN</code> and <code>MOUSEWHEEL</code> events to the top-most active window.</p>
+    </div>
+    <div class="dev-note">
+      <h4>Clipping</h4>
+      <p>Content is rendered using <code>surface.set_clip()</code> to prevent UI overlap during resizing or scrolling.</p>
+    </div>
+    <div class="dev-note">
+      <h4>Custom Apps</h4>
+      <p>Learn how to create your own applications by reading the Custom Apps documentation.</p>
+    </div>
+    <div class="dev-note">
+      <h4>License</h4>
+      <p>kebabOS is released under the <strong>MIT License</strong> — free for personal and commercial use.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>kebabOS v0.3.0 — Built with Pygame &amp; passion. <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a></p>
+</footer>
+
+<script>
+  /* ── Dark mode ── */
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.classList.add('dark');
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(event) {
+    if (event.matches) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  });
+
+  /* ── Nav scroll effect ── */
+  var mainNav = document.getElementById('mainNav');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 20) {
+      mainNav.classList.add('scrolled');
+    } else {
+      mainNav.classList.remove('scrolled');
+    }
+  });
+
+  /* ── Mobile menu ── */
+  var mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  var mobileNav = document.getElementById('mobileNav');
+  var mobileNavClose = document.getElementById('mobileNavClose');
+  var mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+  mobileMenuBtn.addEventListener('click', function() {
+    mobileNav.classList.add('open');
+  });
+
+  mobileNavClose.addEventListener('click', function() {
+    mobileNav.classList.remove('open');
+  });
+
+  mobileNavLinks.forEach(function(link) {
+    link.addEventListener('click', function() {
+      mobileNav.classList.remove('open');
+    });
+  });
+
+  /* ── Reveal on scroll ── */
+  var reveals = document.querySelectorAll('.reveal');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(function(el) {
+    observer.observe(el);
+  });
+
+  /* ── Copy buttons ── */
+  document.querySelectorAll('.copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var code = btn.getAttribute('data-code');
+      if (code && navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(function() {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(function() {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      }
+    });
+  });
+
+  /* ── Smooth scroll for anchor links ── */
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
+
