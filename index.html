@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="icon" type="image/x-icon" href="static/logo-border-rounded.png">
+<link rel="icon" type="image/x-icon" href="assets/icon.png">
 <meta name="google-site-verification" content="SM61MTe1R-CuQoKmWyCKPi4ox-F-4H3AizqJJ95mi4Q" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,11 +71,6 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  ::selection {
-    background: var(--accent);
-    color: #fff;
-  }
-
   /* ── NAV ── */
   nav {
     position: fixed;
@@ -91,12 +86,6 @@
     background: var(--bg);
     border-bottom: 1px solid var(--border-subtle);
     transition: background 0.3s, border-color 0.3s;
-  }
-
-  nav.scrolled {
-    background: color-mix(in srgb, var(--bg) 85%, transparent);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
   }
 
   .nav-brand {
@@ -178,18 +167,6 @@
     position: relative;
   }
 
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
   .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -201,27 +178,12 @@
     padding: 6px 16px;
     border-radius: 100px;
     margin-bottom: 2.5rem;
-    animation: fadeUp 0.6s ease-out both;
-  }
-
-  .hero-badge .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--teal);
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
   }
 
   .kebab-logo {
     width: 100px;
     height: 100px;
     margin-bottom: 2rem;
-    animation: fadeUp 0.6s ease-out 0.1s both;
     position: relative;
   }
 
@@ -238,7 +200,6 @@
     letter-spacing: -0.04em;
     line-height: 1.1;
     margin-bottom: 1.5rem;
-    animation: fadeUp 0.6s ease-out 0.2s both;
   }
 
   .hero h1 .accent { color: var(--accent); }
@@ -250,13 +211,11 @@
     font-weight: 300;
     line-height: 1.8;
     margin-bottom: 2.5rem;
-    animation: fadeUp 0.6s ease-out 0.3s both;
   }
 
   .hero-actions {
     display: flex;
     gap: 12px;
-    animation: fadeUp 0.6s ease-out 0.4s both;
   }
 
   .btn {
@@ -279,7 +238,6 @@
   }
 
   .btn-primary:hover {
-    transform: translateY(-1px);
     box-shadow: 0 6px 24px rgba(232, 85, 61, 0.3);
   }
 
@@ -291,16 +249,14 @@
 
   .btn-secondary:hover {
     border-color: var(--text-muted);
-    transform: translateY(-1px);
   }
 
   /* ── VARIANTS SECTION ── */
   .variants {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1.5rem;
     margin-top: 3rem;
-    animation: fadeUp 0.6s ease-out 0.5s both;
   }
 
   .variant-card {
@@ -314,28 +270,11 @@
     overflow: hidden;
   }
 
-  .variant-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transition: transform 0.3s;
-  }
-
   .variant-card:hover::before {
     transform: scaleX(1);
   }
 
-  .variant-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .variant-card.teal::before {
+  .variant-card::before {
     background: var(--teal);
   }
 
@@ -687,23 +626,6 @@
 
   footer a:hover { color: var(--accent); }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
   /* ── MOBILE NAV OVERLAY ── */
   .mobile-nav-overlay {
     display: none;
@@ -796,13 +718,14 @@
     }
   }
 </style>
+<base target="_blank">
 </head>
 <body>
 
 <!-- NAV -->
 <nav id="mainNav">
   <a href="#" class="nav-brand" onclick="return false;">
-    <img class="kebab-icon" src="static/logo-border-rounded.png" alt="kebabOS" style="border: solid 2px black; border-radius: 5px;">
+    <img class="kebab-icon" src="assets/icon.png" alt="kebabOS">
     <span>kebabOS</span>
   </a>
   <ul class="nav-links">
@@ -840,7 +763,7 @@
   </div>
 
   <div class="kebab-logo">
-    <img src="static/logo-border-rounded.png" alt="kebabOS logo" style="border: solid 2px black; border-radius: 5px;">
+    <img src="assets/icon.png" alt="kebabOS logo">
   </div>
 
   <h1>kebab<span class="accent">OS</span></h1>
@@ -863,24 +786,11 @@
   <div class="variants">
     <div class="variant-card gui">
       <div class="variant-icon"><i class="fa-solid fa-desktop"></i></div>
-      <h3>kebab-gui</h3>
+      <h3>kebab-os</h3>
       <p>The full graphical experience. Window management, web browser, taskbar, and desktop environment built with Pygame.</p>
       <div class="variant-meta">
         <span><i class="fa-solid fa-window-maximize"></i> Graphical</span>
         <span><i class="fa-solid fa-puzzle-piece"></i> Pygame</span>
-      </div>
-      <br>
-          <a href="https://docs.kebabos.me" class="btn btn-primary">
-      <i class="fa-solid fa-terminal"></i> Get Started
-    </a>
-    </div>
-    <div class="variant-card cli teal">
-      <div class="variant-icon"><i class="fa-solid fa-terminal"></i></div>
-      <h3>kebab-cli</h3>
-      <p>The lightweight terminal variant. Pure command-line interface with shell commands, file system, and scripting support.</p>
-      <div class="variant-meta">
-        <span><i class="fa-solid fa-keyboard"></i> Terminal</span>
-        <span><i class="fa-solid fa-feather"></i> Lightweight</span>
       </div>
       <br>
           <a href="https://docs.kebabos.me" class="btn btn-primary">
@@ -895,9 +805,9 @@
 <section id="variants">
   <div class="reveal">
     <p class="section-label">00 / Variants</p>
-    <h2 class="section-title">Choose your<br>environment.</h2>
+    <h2 class="section-title">Get started.</h2>
     <p class="section-desc">
-      kebabOS comes in two flavors. Pick the interface that fits your workflow.
+      kebabOS is a graphical operating system environment built with Pygame.
     </p>
   </div>
 
@@ -905,31 +815,15 @@
     <div class="install-card">
       <div class="install-header">
         <span class="step">GUI</span>
-        <h3>kebab-gui</h3>
+        <h3>kebab-os</h3>
       </div>
       <div class="code-block">
-        <button class="copy-btn" data-code="git clone https://github.com/kebab-os/kebab-gui.git">Copy</button>
-        <code><span class="func">git</span> <span class="keyword">clone</span> <span class="string">https://github.com/kebab-os/kebab-gui.git</span></code>
+        <button class="copy-btn" data-code="git clone https://github.com/kebab-os/kebab-os.git">Copy</button>
+        <code><span class="func">git</span> <span class="keyword">clone</span> <span class="string">https://github.com/kebab-os/kebab-os.git</span></code>
       </div>
       <div style="padding: 1.25rem 1.5rem; border-top: 1px solid var(--border);">
         <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
           Full window manager, kebabBrowser, clipboard support, and persistent storage. Requires display server.
-        </p>
-      </div>
-    </div>
-
-    <div class="install-card">
-      <div class="install-header">
-        <span class="step" style="background: var(--teal-glow); color: var(--teal);">CLI</span>
-        <h3>kebab-cli</h3>
-      </div>
-      <div class="code-block">
-        <button class="copy-btn" data-code="git clone https://github.com/kebab-os/kebab-cli.git">Copy</button>
-        <code><span class="func">git</span> <span class="keyword">clone</span> <span class="string">https://github.com/kebab-os/kebab-cli.git</span></code>
-      </div>
-      <div style="padding: 1.25rem 1.5rem; border-top: 1px solid var(--border);">
-        <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
-          Headless operation, SSH-friendly, minimal dependencies. Perfect for servers or low-resource environments.
         </p>
       </div>
     </div>
@@ -939,7 +833,7 @@
 
   <div class="reveal">
     <p class="section-desc">
-      When you have cloned the git repo, run this code to change to the <code>src</code> directory and boot it. Works for both <b>kebab-gui</b> and <b>kebab-cli</b>.
+      When you have cloned the git repo, run this code to change to the <code>src</code> directory and boot it. Works for <b>kebab-os</b>.
     </p>
   </div>
 
@@ -956,10 +850,18 @@ python main.py">Copy</button>
       </div>
       <div style="padding: 1.25rem 1.5rem; border-top: 1px solid var(--border);">
         <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
-          Boot kebab-os and get it running. Remeber to install the dependencies first.
+          Boot kebab-os and get it running. Remember to install the dependencies first.
         </p>
       </div>
     </div>
+  </div>
+
+  <br /><br />
+
+  <div class="reveal">
+    <p class="section-desc">
+      Looking for more tools? Check out <a href="https://tools.kebabos.me"><b>kebab-tools</b></a> and other utilities in the ecosystem.
+    </p>
   </div>
 </section>
 
@@ -977,32 +879,27 @@ python main.py">Copy</button>
     <div class="feature-card">
       <div class="feature-icon window"><i class="fa-solid fa-layer-group"></i></div>
       <h3>Window Manager</h3>
-      <p>Drag, resize, and stack multiple application windows with fluid, responsive interactions. <em>(kebab-gui)</em></p>
+      <p>Drag, resize, and stack multiple application windows with fluid, responsive interactions. <em>(kebab-os)</em></p>
     </div>
     <div class="feature-card">
       <div class="feature-icon taskbar"><i class="fa-solid fa-grip-lines"></i></div>
       <h3>Smart Taskbar</h3>
-      <p>Pin and unpin apps via context menus with real-time running indicators using a teal accent bar. <em>(kebab-gui)</em></p>
+      <p>Pin and unpin apps via context menus with real-time running indicators using a teal accent bar. <em>(kebab-os)</em></p>
     </div>
     <div class="feature-card">
       <div class="feature-icon browser"><i class="fa-solid fa-globe"></i></div>
       <h3>kebabBrowser</h3>
-      <p>Graphical web rendering via html2image with scroll support and clipboard integration. <em>(kebab-gui)</em></p>
+      <p>Graphical web rendering via html2image with scroll support and clipboard integration. <em>(kebab-os)</em></p>
     </div>
     <div class="feature-card">
       <div class="feature-icon clipboard"><i class="fa-solid fa-clipboard"></i></div>
       <h3>Clipboard Support</h3>
-      <p>Full Ctrl+V pasting functionality in text fields across all applications. <em>(kebab-gui)</em></p>
+      <p>Full Ctrl+V pasting functionality in text fields across all applications. <em>(kebab-os)</em></p>
     </div>
     <div class="feature-card">
       <div class="feature-icon persist"><i class="fa-solid fa-hard-drive"></i></div>
       <h3>Persistence</h3>
       <p>Saves pinned apps and settings to <code>storage/data.json</code> between sessions. <em>(Both variants)</em></p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon" style="background: rgba(137, 180, 250, 0.12); color: #89b4fa;"><i class="fa-solid fa-code"></i></div>
-      <h3>Shell Interface</h3>
-      <p>Built-in command interpreter with piping, redirection, and scripting capabilities. <em>(kebab-cli)</em></p>
     </div>
   </div>
 </section>
@@ -1068,26 +965,6 @@ python main.py">Copy</button>
           <td class="action">Paste URL</td>
           <td class="control"><kbd>Ctrl</kbd> + <kbd>V</kbd> in Browser</td>
           <td style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent);">GUI</td>
-        </tr>
-        <tr>
-          <td class="action">Execute Command</td>
-          <td class="control">Type command + <kbd>Enter</kbd></td>
-          <td style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--teal);">CLI</td>
-        </tr>
-        <tr>
-          <td class="action">Auto-complete</td>
-          <td class="control"><kbd>Tab</kbd></td>
-          <td style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--teal);">CLI</td>
-        </tr>
-        <tr>
-          <td class="action">Command History</td>
-          <td class="control"><kbd>↑</kbd> / <kbd>↓</kbd> arrows</td>
-          <td style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--teal);">CLI</td>
-        </tr>
-        <tr>
-          <td class="action">Interrupt Process</td>
-          <td class="control"><kbd>Ctrl</kbd> + <kbd>C</kbd></td>
-          <td style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--teal);">CLI</td>
         </tr>
       </tbody>
     </table>
@@ -1170,21 +1047,6 @@ python main.py">Copy</button>
     link.addEventListener('click', function() {
       mobileNav.classList.remove('open');
     });
-  });
-
-  /* ── Reveal on scroll ── */
-  var reveals = document.querySelectorAll('.reveal');
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  reveals.forEach(function(el) {
-    observer.observe(el);
   });
 
   /* ── Copy buttons ── */
